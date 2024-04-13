@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/userManagement', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -15,43 +14,46 @@ mongoose.connect('mongodb://localhost:27017/userManagement', {
   .catch(err => console.log(err));
 
 const UserSchema = new mongoose.Schema({
+   id: { type: Number, required: true, unique: true },
   username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true }
 });
 
-// Middleware to hash password before saving
 UserSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 8);
   }
   next();
 });
-
+let currentUserId = 0;
 const User = mongoose.model('User', UserSchema);
-
-
 app.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).send({ error: 'Username and password are required' });
+    const { username, email, password } = req.body;
+    console.log(req.body)
+    if (!username || !email || !password) {
+      return res.status(400).send({ error: 'Username, email, and password are required' });
     }
-    const user = new User(req.body);
+    currentUserId++;
+
+    const user = new User({ id: currentUserId, username, email, password });
     await user.save();
-    res.status(201).send({ message: 'User created successfully', user: { username: user.username } });
+    res.status(201).send({ message: 'User created successfully', user: { id: user.id, username: user.username, email: user.email } });
   } catch (error) {
-    if (error.code === 11000) { // Duplicate username
-      return res.status(400).send({ error: 'Username already exists' });
+    if (error.code === 11000) {
+      return res.status(400).send({ error: 'Username or email already exists' });
     }
     res.status(500).send({ error: 'Internal server error' });
   }
 });
 
-// Login Endpoint
 app.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { login, password } = req.body;
+    const user = await User.findOne({ 
+      $or: [{ username: login }, { email: login.toLowerCase() }] 
+    });
     if (!user) {
       return res.status(404).send({ error: 'User not found' });
     }
@@ -59,13 +61,13 @@ app.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).send({ error: 'Invalid credentials' });
     }
-    res.send({ message: 'Login successful', user: { username: user.username } });
+    res.send({ message: 'Login successful', user: { username: user.username, email: user.email } });
   } catch (error) {
     res.status(500).send({ error: 'Internal server error' });
   }
 });
 
-const port = 3000;
+const port = 3001;
 app.listen(port, () => {
   console.log(`User management service listening on port ${port}`);
 });

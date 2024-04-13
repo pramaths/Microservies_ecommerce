@@ -1,7 +1,7 @@
-// app.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const axios = require('axios'); // Make sure to require axios
 const Cart = require('./CartModel');
 
 const app = express();
@@ -13,10 +13,26 @@ mongoose.connect('mongodb://localhost/cartService', {
   useUnifiedTopology: true
 });
 
+async function getProductDetails(productId) {
+  try {
+    const response = await axios.get(`http://localhost:3002/product/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching product details:', error);
+    return null;
+  }
+}
+
 // Add item to cart
 app.post('/cart/:userId', async (req, res) => {
   const { userId } = req.params;
   const { productId, quantity } = req.body;
+
+  // Validate the product before adding to cart
+  const productDetails = await getProductDetails(productId);
+  if (!productDetails) {
+    return res.status(404).send('Product not found');
+  }
 
   try {
     let cart = await Cart.findOne({ userId });
@@ -41,14 +57,22 @@ app.post('/cart/:userId', async (req, res) => {
   }
 });
 
-// Get cart items
+// Get cart items with product details
 app.get('/cart/:userId', async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId: req.params.userId });
     if (!cart) {
       return res.status(404).send('Cart not found');
     }
-    res.status(200).send(cart);
+
+    const itemsWithDetails = await Promise.all(
+      cart.items.map(async item => {
+        const productDetails = await getProductDetails(item.productId);
+        return { ...item.toObject(), productDetails };
+      })
+    );
+
+    res.status(200).send({ ...cart.toObject(), items: itemsWithDetails });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -71,7 +95,7 @@ app.delete('/cart/:userId/items/:itemId', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
   console.log(`Cart service listening on port ${PORT}`);
 });

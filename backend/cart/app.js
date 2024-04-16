@@ -2,13 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const axios = require('axios'); // Make sure to require axios
-const Cart = require('./CartModel');
+const Cart = require('./model');
 
 const app = express();
 app.use(bodyParser.json());
 
 // MongoDB connection string
-mongoose.connect('mongodb://localhost/cartService', {
+mongoose.connect('mongodb+srv://prabhasreddy-57:mongodb@prabhas.hoyjryn.mongodb.net/?retryWrites=true&w=majority&appName=prabhas'||'mongodb://localhost/cartService', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });

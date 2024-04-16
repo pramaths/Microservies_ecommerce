@@ -2,17 +2,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const Payment = require('./PaymentModel');
-
+const Payment = require('./model');
+require("dotenv").config();
 const app = express();
 app.use(bodyParser.json());
+console.log(process.env.MONGODB_URI)
 
 // MongoDB connection string
-mongoose.connect('mongodb://localhost/paymentService', {
+mongoose.connect(process.env.MONGODB_URI||'mongodb://localhost/paymentService', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-
+console.log(process.env.MONGODB_URI)
 // Process payment
 app.post('/payment', async (req, res) => {
   const { userId, orderId, amount } = req.body;
@@ -31,7 +32,7 @@ app.post('/payment', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3004;
 app.listen(PORT, () => {
   console.log(`Payment service listening on port ${PORT}`);
 });

@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/userManagement', {
+mongoose.connect('mongodb+srv://prabhasreddy-57:mongodb@prabhas.hoyjryn.mongodb.net/?retryWrites=true&w=majority&appName=prabhas'||'mongodb://localhost:27017/userManagement', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log('MongoDB Connected'))

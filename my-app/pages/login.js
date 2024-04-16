@@ -1,12 +1,37 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router'; // Import the useRouter hook
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter(); // Create the router object
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Email:', email, 'Password:', password);
+
+    try {
+      // Call the login API
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      // If login is successful, navigate to the products page
+      if (response.ok) {
+        router.push('/products');
+      } else {
+        // Handle errors, such as displaying a message to the user
+        console.error('Login failed:', data.message);
+      }
+    } catch (error) {
+      // Handle any other errors, such as network issues
+      console.error('There was an error submitting the form', error);
+    }
   };
 
   return (

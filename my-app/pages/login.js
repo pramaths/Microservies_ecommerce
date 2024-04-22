@@ -11,7 +11,7 @@ function Login() {
 
     try {
       // Call the login API
-      const response = await fetch('/api/login', {
+      const response = await fetch('http:localhost:3004/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ function Login() {
       });
 
       const data = await response.json();
-
+      console.log(data);
       // If login is successful, navigate to the products page
       if (response.ok) {
         router.push('/products');

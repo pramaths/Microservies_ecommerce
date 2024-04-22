@@ -1,20 +1,20 @@
 # Use official Node.js image as the base image
-FROM node:14-alpine
+FROM node:18.17.0
 
-# Set working directory
+# Set the working directory in the Docker image
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json
-COPY package*.json ./
+COPY backend/UserManagement/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application
-COPY . .
+COPY backend/UserManagement/ .
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE 3004
 
 # Command to run the application
 CMD ["npm", "start"]

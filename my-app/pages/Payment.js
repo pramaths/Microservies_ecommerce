@@ -19,7 +19,7 @@ function Payment() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3004/payment', paymentDetails);
+            await axios.post('http://localhost:3002/payment', paymentDetails);
             alert('Payment successful');
         } catch (error) {
             console.error('Payment failed:', error);

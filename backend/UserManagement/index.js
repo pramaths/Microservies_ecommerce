@@ -67,7 +67,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-const port = 3001;
+const port = 3004;
 app.listen(port, () => {
   console.log(`User management service listening on port ${port}`);
 });

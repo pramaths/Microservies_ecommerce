@@ -95,7 +95,7 @@ app.delete('/cart/:userId/items/:itemId', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Cart service listening on port ${PORT}`);
 });

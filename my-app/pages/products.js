@@ -7,7 +7,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3002/products');
+        const response = await fetch('http://localhost:3003/products');
         const data = await response.json();
         setProducts(data);
       } catch (error) {

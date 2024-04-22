@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  user:
+    build:
+      context: ./backend/UserManagement
+      dockerfile: Dockerfile.user
+    ports:
+      - "3004:3004"
+
+  cart:
+    build:
+      context: ./backend/cart
+      dockerfile: Dockerfile.cart
+    ports:
+      - "3001:3001"
+
+  payment:
+    build:
+      context: ./backend/payment-gateway
+      dockerfile: Dockerfile.payment
+    ports:
+      - "3002:3002"
+
+  product:
+    build:
+      context: ./backend/product-management
+      dockerfile: Dockerfile.product
+    ports:
+      - "3003:3003"
+
+  frontend:
+    build:
+      context: ./my-app
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"

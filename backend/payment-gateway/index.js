@@ -32,7 +32,7 @@ app.post('/payment', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Payment service listening on port ${PORT}`);
 });

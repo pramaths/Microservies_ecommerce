@@ -6,17 +6,22 @@ export default function ProductDetails() {
   const [adding, setAdding] = useState(false); // State to manage loading state of adding to cart
   const router = useRouter();
   const { id } = router.query;
-  const userId = 'yourUserId'; // This should be dynamically set based on user's session or a similar method
+  const {userId} =get.userId
+  //const userId = 'yourUserId'; // This should be dynamically set based on user's session or a similar method
 
   useEffect(() => {
     if (id) {
       const fetchProduct = async () => {
-        const response = await fetch(`http://localhost:3002/products/${id}`);
-        const data = await response.json();
-        setProduct(data);
+        try {
+          const response = await fetch(`http://localhost:3003/products/${id}`);
+          const data = await response.json();
+          setProduct(data);
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
       };
 
-      fetchProduct().catch(console.error);
+      fetchProduct();
     }
   }, [id]);
 
@@ -35,10 +40,13 @@ export default function ProductDetails() {
           quantity: 1 // This can be dynamic based on a user selection if needed
         })
       });
+
       if (response.ok) {
         alert('Product added to cart!');
       } else {
-        alert('Failed to add product to cart.');
+        // If response is not ok, handle the error
+        const errorMessage = await response.text();
+        alert(`Failed to add product to cart: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error adding product to cart:', error);

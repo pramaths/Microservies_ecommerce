@@ -49,7 +49,7 @@ app.get('/products/:id', async (req, res) => {
   }
 });
 
-const port = 3002; // Consider running this on a different port if your user management service is on 3000
+const port = 3003; // Consider running this on a different port if your user management service is on 3000
 app.listen(port, () => {
   console.log(`Product management service listening on port ${port}`);
 });
